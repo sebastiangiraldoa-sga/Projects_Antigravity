@@ -50,3 +50,17 @@
   - El motor local Whisper extrae el audio directamente del video sin conversiones previas.
 - **Clases Presenciales (iPhone)**: Grabación en 1 toque desde Notas de Voz compartida a la subcarpeta de la materia en Google Drive.
 - **Flujo de Procesamiento**: Con solo decir *"Procesa la última clase de [Materia]"*, extraigo transcripción, conceptos, fórmulas y tareas.
+
+---
+
+## Equipo de Subagentes Especializados
+Para trabajar en paralelo y resolver procesos extensos con máxima rapidez y precisión, contamos con subagentes dedicados:
+
+1. **`transcription_processor` (Especialista en Audio & Síntesis)**:
+   - Descarga audios/videos de Drive, corre el modelo Whisper local, genera apuntes estructurados con KaTeX y detecta compromisos para la agenda.
+2. **`ia_engineer` (Especialista en Machine Learning & Deep Learning)**:
+   - Desarrolla código en PyTorch, Scikit-learn y OpenCV. Diseña la CNN con regularización, entrena modelos y realiza experimentación reproducible.
+3. **`biomedical_writer` (Especialista en Ingeniería Biomédica & Documentación)**:
+   - Redacta informes técnicos de laboratorio (Máquina de Anestesia, Bioinstrumentación 2), análisis clínicos y memorias de proyecto en Markdown o Google Docs.
+4. **`research` (Investigador Académico & Codebase)**:
+   - Subagente de exploración rápida de literatura, documentación de librerías y consultas en segundo plano.
