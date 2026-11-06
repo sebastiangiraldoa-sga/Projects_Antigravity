@@ -31,3 +31,11 @@
 3. **Métrica de Cumplimiento & Tono**:
    - **En verde (cumpliendo)**: Acompañamiento estratégico, tips de estudio, optimización y felicitaciones.
    - **En amarillo/rojo (rezago)**: Advertencias claras, eliminación de distracciones, planes de rescate y seguimiento estricto.
+
+---
+
+## Pipeline Automático de Clases y Grabaciones
+- **Buzón en la nube**: Carpeta `Clases_Transcripciones` en Google Drive (ID: `1nf8koqAAbCYYPRcrA3FL110iizrh4Yir`).
+- **Clases Virtuales (Webex)**: El bot de transcripción (ej. Fireflies) asiste a la reunión sincronizada con Calendar y deposita el texto en la carpeta de Drive.
+- **Clases Presenciales (iOS)**: Grabación en 1 toque desde el iPhone que se sube automáticamente a la carpeta de Drive.
+- **Flujo de Procesamiento**: Con solo decir *"Procesa la clase de hoy"*, el Asistente extrae conclusiones, fórmulas, conceptos y nuevas tareas directamente al repositorio.
