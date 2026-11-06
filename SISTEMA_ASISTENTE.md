@@ -35,7 +35,18 @@
 ---
 
 ## Pipeline Automático de Clases y Grabaciones
-- **Buzón en la nube**: Carpeta `Clases_Transcripciones` en Google Drive (ID: `1nf8koqAAbCYYPRcrA3FL110iizrh4Yir`).
-- **Clases Virtuales (Webex)**: El bot de transcripción (ej. Fireflies) asiste a la reunión sincronizada con Calendar y deposita el texto en la carpeta de Drive.
-- **Clases Presenciales (iOS)**: Grabación en 1 toque desde el iPhone que se sube automáticamente a la carpeta de Drive.
-- **Flujo de Procesamiento**: Con solo decir *"Procesa la clase de hoy"*, el Asistente extrae conclusiones, fórmulas, conceptos y nuevas tareas directamente al repositorio.
+- **Buzón en Google Drive**: Carpeta `Clases_Transcripciones` (ID: `1nf8koqAAbCYYPRcrA3FL110iizrh4Yir`).
+  - `Vision_Computacional/` (ID: `1b867rfz_V7hoLiUVMfqDZ02MeOhTI9f5`)
+  - `Aprendizaje_Automatico/` (ID: `10uGn7kjXuIZbaN0KsAZayPWa3BrNkvvR`)
+  - `Bioinstrumentacion_2/` (ID: `1a-1fdbgXt2rhNyy5F_I77fLyq0etF_2T`)
+  - `Ingenieria_Clinica_2/` (ID: `1e4_1Ge7jBqifSqmQ6TEpgZVlWsRAQBWn`)
+  - `Redes_Neuronales_DL/` (ID: `1vr7UYBh_VX-qN15evz8kdj8EbIevZCIl`)
+  - `Diseno_Biomedico_2/` (ID: `1-3IgiGQ50eUotZ_IQGM3-vnQP0eIEWZF`)
+  - `Seminario_Biomedica/` (ID: `1IJ4ybyVX35VNdSvjlaRyFa2Tjlz7lZEK`)
+  - `Monitoria_Ciudadana/` (ID: `1O3ZbJ0PdZ6b516YJ1HUjRWK4_vUOtQAM`)
+
+- **Grabaciones Universitarias (Webex/Video/Audio)**:
+  - Las grabaciones oficiales que comparte la universidad (`.mp4`, `.m4a`, `.mp3`) se suben o mueven directo a la subcarpeta de la materia.
+  - El motor local Whisper extrae el audio directamente del video sin conversiones previas.
+- **Clases Presenciales (iPhone)**: Grabación en 1 toque desde Notas de Voz compartida a la subcarpeta de la materia en Google Drive.
+- **Flujo de Procesamiento**: Con solo decir *"Procesa la última clase de [Materia]"*, extraigo transcripción, conceptos, fórmulas y tareas.
