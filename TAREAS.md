@@ -47,6 +47,10 @@
 - **Aprendizaje Automático**:
   - [ ] 14 Nov (11:00): Tarea 3
 
+### Proyectos Especiales / Investigación
+- **Proyecto Liofilizados**:
+  - [ ] 13 Nov (08:00 - 12:30): Salida de campo - Levantamiento de equipos en Candelaria, Valle del Cauca.
+
 ---
 
 ## 🏆 Historial de Tareas Completadas
