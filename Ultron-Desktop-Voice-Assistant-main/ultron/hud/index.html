@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta
+    name="description"
+    content="ULTRÓN v5.1 — Sistema Operativo Espacial de Voz, Telemetría de Hardware y Visión Multimodal para Sebastián Giraldo Acosta."
+  />
+  <meta name="theme-color" content="#05060b" />
+  <title>ULTRÓN — AI Voice OS</title>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+
+  <!-- Google Fonts: Space Grotesk, Inter, Fira Code -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body data-state="listening" data-ultron-state="listening">
+  <!-- Subtle Ambient Spatial Glow -->
+  <div class="ambient-mesh" aria-hidden="true">
+    <div class="ambient-orb ambient-orb-primary"></div>
+    <div class="ambient-orb ambient-orb-secondary"></div>
+  </div>
+
+  <!-- ====================================================================
+       ULTRA-CLEAN FLOATING TOP HEADER (56px, ZERO TRUNCATION ON 1366x768)
+       ==================================================================== -->
+  <header class="hud-topbar" role="banner">
+    <!-- Left: Brand Identity -->
+    <div class="topbar-brand">
+      <div class="brand-emblem" aria-hidden="true">
+        <span class="emblem-core"></span>
+        <svg class="emblem-ring-svg" viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="16" r="13" stroke="currentColor" stroke-width="1.25" stroke-dasharray="4 3" />
+          <circle cx="16" cy="16" r="8.5" stroke="currentColor" stroke-width="1" opacity="0.45" />
+        </svg>
+      </div>
+      <div class="brand-titles">
+        <h1 class="hud-title">ULTRÓN</h1>
+        <span class="brand-divider" aria-hidden="true">/</span>
+        <span class="hud-subtitle">AI Voice OS</span>
+      </div>
+    </div>
+
+    <!-- Center: Progressive Disclosure Drawer Triggers & Command Palette -->
+    <nav class="topbar-center-nav" aria-label="Paneles del sistema">
+      <!-- Live Telemetry Pill (Opens Telemetry Slide-Over Drawer) -->
+      <button
+        type="button"
+        id="btn-toggle-telemetry"
+        class="nav-glass-pill telemetry-live-pill"
+        data-status="online"
+        aria-expanded="false"
+        aria-controls="telemetry-drawer"
+        title="Abrir panel de Telemetría de Hardware y Procesos"
+      >
+        <span class="status-dot" id="connection-status-dot"></span>
+        <span class="pill-metric-group">
+          <span class="pill-metric-item">CPU <strong id="pill-cpu-val">0%</strong></span>
+          <span class="pill-sep">·</span>
+          <span class="pill-metric-item">RAM <strong id="pill-ram-val">0%</strong></span>
+        </span>
+        <svg class="svg-icon icon-xs chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="m9 18 6-6-6-6"></path>
+        </svg>
+      </button>
+
+      <!-- Vision Studio Pill (Opens Multimodal Vision Slide-Over Drawer) -->
+      <button
+        type="button"
+        id="btn-toggle-vision"
+        class="nav-glass-pill"
+        aria-expanded="false"
+        aria-controls="vision-drawer"
+        title="Abrir Estudio de Visión Multimodal"
+      >
+        <svg class="svg-icon icon-sm text-cyan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+          <circle cx="12" cy="12" r="3"></circle>
+        </svg>
+        <span>Visión IA</span>
+      </button>
+
+      <!-- Command Palette Pill (Ctrl+K) -->
+      <button
+        type="button"
+        id="cmd-palette-trigger-btn"
+        class="nav-glass-pill"
+        title="Abrir paleta de comandos rápidos (Ctrl+K)"
+        aria-label="Abrir paleta de comandos rápidos (Ctrl+K)"
+      >
+        <svg class="svg-icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="m21 21-4.3-4.3"></path>
+        </svg>
+        <span>Comandos</span>
+        <kbd class="kbd-badge">Ctrl+K</kbd>
+      </button>
+
+      <!-- Mini-Pill Waveform Mode (Jarvis Pro Floating Pill) -->
+      <button
+        type="button"
+        id="btn-mini-pill"
+        class="nav-glass-pill"
+        aria-pressed="false"
+        title="Alternar Modo Píldora Flotante (Jarvis Waveform Pill)"
+      >
+        <svg class="svg-icon icon-sm text-cyan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="8" width="18" height="8" rx="4"></rect>
+          <line x1="8" y1="11" x2="8" y2="13"></line>
+          <line x1="12" y1="10" x2="12" y2="14"></line>
+          <line x1="16" y1="11" x2="16" y2="13"></line>
+        </svg>
+        <span>Modo Píldora</span>
+      </button>
+    </nav>
+
+    <!-- Right: Compact Language Selector & Neural Voice Toggle -->
+    <div class="topbar-right-controls">
+      <div class="segmented-control lang-control" id="lang-selector-group" role="group" aria-label="Idioma de reconocimiento de voz">
+        <button
+          type="button"
+          id="lang-es-btn"
+          class="seg-btn active"
+          data-lang="es-CO"
+          title="Hablar en Español (Colombia / Latinoamérica)"
+        >
+          ES
+        </button>
+        <button
+          type="button"
+          id="lang-en-btn"
+          class="seg-btn"
+          data-lang="en-US"
+          title="Practicar hablando en Inglés (Ultrón te entiende en inglés y responde en español)"
+        >
+          EN
+        </button>
+      </div>
+
+      <button
+        type="button"
+        id="tts-toggle-btn"
+        class="tactical-btn voice-toggle-btn active"
+        aria-pressed="true"
+        title="Alternar síntesis de voz neuronal (Edge-TTS / WebSpeech)"
+      >
+        <span class="btn-led" aria-hidden="true"></span>
+        <svg class="svg-icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+          <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+          <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+        </svg>
+        <span id="tts-toggle-label">Voz Activa</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ====================================================================
+       BREATHABLE SINGLE CENTER STAGE (MAX-WIDTH 780PX, ZERO VISUAL CLUTTER)
+       ==================================================================== -->
+  <main class="spatial-stage" role="main">
+    <!-- 1. TOP: OPEN FLOATING 3D VOLUMETRIC SHADER ORB (NO OUTER CARD BOX) -->
+    <section class="orb-hero" aria-label="Núcleo Acústico de Ultrón">
+      <div class="reactor-stage" id="reactor-container">
+        <div class="orb-ambient-aura" aria-hidden="true"></div>
+        <div
+          class="canvas-wrapper"
+          id="reactor-click-zone"
+          role="button"
+          tabindex="0"
+          aria-label="Orbe Acústico de Ultrón. Clic para activar micrófono o interrumpir voz."
+          title="Clic para interrumpir a Ultrón (Barge-In) o activar escucha"
+        >
+          <canvas id="reactor-canvas" width="160" height="160"></canvas>
+        </div>
+      </div>
+
+      <!-- Unified Status & Live Transcript Bar directly beneath the Orb -->
+      <div class="orb-status-row" id="live-transcript-container">
+        <span id="reactor-state-badge" class="reactor-state-badge" data-state="listening">
+          Escuchando
+        </span>
+        <span class="transcript-dot" id="transcript-activity-dot" aria-hidden="true"></span>
+        <div id="live-transcript" class="live-transcript-text placeholder" aria-live="polite">
+          Habla con naturalidad o escribe tu consulta abajo...
+        </div>
+        <button
+          type="button"
+          id="flush-transcript-btn"
+          class="mini-action-btn hidden"
+          title="Enviar frase acumulada inmediatamente"
+        >
+          <span>Enviar</span>
+          <svg class="svg-icon icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="9 10 4 15 9 20"></polyline>
+            <path d="M20 4v7a4 4 0 0 1-4 4H4"></path>
+          </svg>
+        </button>
+        <button
+          type="button"
+          id="barge-in-btn"
+          class="tactical-btn crimson-btn hidden"
+          title="Detener voz de Ultrón inmediatamente (Tecla Escape)"
+        >
+          <svg class="svg-icon icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="6" y="6" width="12" height="12" rx="2"></rect>
+          </svg>
+          <span>Interrumpir</span>
+        </button>
+      </div>
+
+      <!-- Sleek Voice Mode Pill Switcher + Subtle Clear Log Action -->
+      <div class="orb-controls-bar">
+        <div class="segmented-control voice-mode-group" id="voice-mode-group" role="group" aria-label="Modo de micrófono">
+          <button
+            type="button"
+            id="mode-handsfree-btn"
+            class="seg-btn active"
+            data-mode="handsfree"
+            title="Escucha continua inteligente: espera 1.7s de silencio antes de enviar"
+          >
+            <svg class="svg-icon icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+              <line x1="12" y1="19" x2="12" y2="22"></line>
+            </svg>
+            <span>Manos Libres</span>
+          </button>
+          <button
+            type="button"
+            id="mode-ptt-btn"
+            class="seg-btn"
+            data-mode="ptt"
+            title="Mantén presionada la barra espaciadora o el botón para hablar"
+          >
+            <svg class="svg-icon icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+              <path d="M8 16h8"></path>
+            </svg>
+            <span>Push-to-Talk [Espacio]</span>
+          </button>
+          <button
+            type="button"
+            id="mode-muted-btn"
+            class="seg-btn"
+            data-mode="muted"
+            title="Pausar micrófono y usar solo texto"
+          >
+            <svg class="svg-icon icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="2" y1="2" x2="22" y2="22"></line>
+              <path d="M18.89 13.23A7.12 7.12 0 0 0 19 12v-2"></path>
+              <path d="M5 10v2a7 7 0 0 0 12 5"></path>
+            </svg>
+            <span>Pausado</span>
+          </button>
+        </div>
+
+        <button
+          type="button"
+          id="clear-chat-btn"
+          class="subtle-clear-btn"
+          title="Limpiar conversación"
+        >
+          <svg class="svg-icon icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3 6h18"></path>
+            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+          </svg>
+          <span>Limpiar chat</span>
+        </button>
+      </div>
+
+      <!-- Push-To-Talk Hold Button (shown only when PTT mode is active) -->
+      <button
+        type="button"
+        id="ptt-hold-btn"
+        class="tactical-btn ptt-hold-btn hidden"
+      >
+        <svg class="svg-icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+          <line x1="12" y1="19" x2="12" y2="22"></line>
+        </svg>
+        <span>Mantén presionado aquí o [Espacio] para hablar sin cortes</span>
+      </button>
+    </section>
+
+    <!-- 2. MIDDLE: CLEAN, BREATHABLE AI CONVERSATION STREAM -->
+    <section class="conversation-stream-wrap" aria-label="Conversación con Ultrón">
+      <div id="chat-log" class="chat-log" role="log" aria-live="polite">
+        <!-- Messages dynamically injected here -->
+      </div>
+    </section>
+
+    <!-- 3. BOTTOM: FLOATING GLASS INPUT BAR + UNIFIED QUICK-ACTION PILLS -->
+    <section class="command-dock" aria-label="Entrada de comandos y acciones rápidas">
+      <form id="command-form" class="command-form" autocomplete="off">
+        <div class="command-input-shell">
+          <svg class="svg-icon icon-sm input-prompt-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path>
+          </svg>
+          <input
+            type="text"
+            id="command-input"
+            class="command-input"
+            placeholder="Escribe una orden o consulta para Ultrón..."
+            aria-label="Escribir comando o consulta para Ultrón"
+          />
+          <button
+            type="button"
+            id="dock-cmd-palette-btn"
+            class="dock-kbd-btn"
+            title="Abrir paleta de comandos (Ctrl+K)"
+          >
+            Ctrl+K
+          </button>
+          <button
+            type="submit"
+            id="command-submit-btn"
+            class="send-icon-btn"
+            title="Enviar comando"
+            aria-label="Enviar comando"
+          >
+            <svg class="svg-icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+          </button>
+        </div>
+      </form>
+
+      <!-- Single Breathable Row of Quick-Action Pills (Wraps cleanly, NEVER clips) -->
+      <div class="quick-actions-bar" id="suggestion-chips" role="toolbar" aria-label="Acciones rápidas">
+        <button
+          type="button"
+          id="qa-nutricoach"
+          class="quick-action-pill quick-action-btn"
+          data-command="abre nutricoach"
+        >
+          <svg class="svg-icon icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path>
+            <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path>
+          </svg>
+          <span>NutriCoach Pro</span>
+        </button>
+
+        <button
+          type="button"
+          id="qa-inventario"
+          class="quick-action-pill quick-action-btn"
+          data-command="abre inventario"
+        >
+          <svg class="svg-icon icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"></path>
+            <path d="m3.3 7 8.7 5 8.7-5"></path>
+            <path d="M12 22V12"></path>
+          </svg>
+          <span>Inventario Pro</span>
+        </button>
+
+        <button
+          type="button"
+          id="qa-calendar"
+          class="quick-action-pill quick-action-btn"
+          data-command="abre google calendar"
+        >
+          <svg class="svg-icon icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
+          <span>Google Calendar</span>
+        </button>
+
+        <button
+          type="button"
+          id="qa-spotify"
+          class="quick-action-pill quick-action-btn"
+          data-command="abre spotify"
+        >
+          <svg class="svg-icon icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M8 14.5c2.5-1 5.5-1 8 0"></path>
+            <path d="M7 11.5c3.2-1.2 6.8-1.2 10 0"></path>
+          </svg>
+          <span>Spotify</span>
+        </button>
+
+        <button
+          type="button"
+          id="qa-vscode"
+          class="quick-action-pill quick-action-btn"
+          data-command="abre vscode"
+        >
+          <svg class="svg-icon icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="16 18 22 12 16 6"></polyline>
+            <polyline points="8 6 2 12 8 18"></polyline>
+            <line x1="14" y1="4" x2="10" y2="20"></line>
+          </svg>
+          <span>VS Code</span>
+        </button>
+
+        <button
+          type="button"
+          id="qa-vision-quick"
+          class="quick-action-pill accent-pill"
+          data-suggest-vision="general"
+        >
+          <svg class="svg-icon icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+          <span>Analizar Pantalla</span>
+        </button>
+
+        <button
+          type="button"
+          id="qa-diagnostico"
+          class="quick-action-pill quick-action-btn"
+          data-command="analiza mi sistema"
+        >
+          <svg class="svg-icon icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+          </svg>
+          <span>Diagnóstico PC</span>
+        </button>
+
+        <button
+          type="button"
+          id="qa-organize-downloads"
+          class="quick-action-pill accent-pill quick-action-btn"
+          data-command="organiza mis descargas"
+          title="Organizar automáticamente la carpeta Descargas por categorías"
+        >
+          <svg class="svg-icon icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+            <line x1="12" y1="11" x2="12" y2="17"></line>
+            <polyline points="9 14 12 17 15 14"></polyline>
+          </svg>
+          <span>Organizar Descargas</span>
+        </button>
+
+        <button
+          type="button"
+          id="qa-edit-clipboard"
+          class="quick-action-pill quick-action-btn"
+          data-command="mejora el texto copiado"
+          title="Mejorar o refactorizar in-place el texto actual del portapapeles"
+        >
+          <svg class="svg-icon icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+            <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+            <path d="m9 14 2 2 4-4"></path>
+          </svg>
+          <span>Editar Portapapeles</span>
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <!-- ====================================================================
+       SLIDE-OVER DRAWER BACKDROP
+       ==================================================================== -->
+  <div id="drawer-backdrop" class="drawer-backdrop hidden" aria-hidden="true"></div>
+
+  <!-- ====================================================================
+       DRAWER 1: TELEMETRÍA DE HARDWARE & PROCESOS (SLIDE-OVER 400PX)
+       ==================================================================== -->
+  <aside
+    id="telemetry-drawer"
+    class="spatial-drawer"
+    aria-labelledby="telemetry-heading"
+    aria-hidden="true"
+  >
+    <div class="drawer-header">
+      <div class="drawer-title-group">
+        <svg class="svg-icon icon-sm text-cyan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+        </svg>
+        <h2 id="telemetry-heading" class="drawer-title">Telemetría &amp; Hardware</h2>
+      </div>
+      <div class="drawer-header-actions">
+        <span id="health-status-badge" class="health-badge" data-health="OPTIMAL">OPTIMAL</span>
+        <button
+          type="button"
+          id="refresh-telemetry-btn"
+          class="icon-btn"
+          title="Actualizar telemetría ahora"
+          aria-label="Actualizar telemetría ahora"
+        >
+          <svg class="svg-icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+            <path d="M3 3v5h5"></path>
+            <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"></path>
+            <path d="M16 16h5v5"></path>
+          </svg>
+        </button>
+        <button
+          type="button"
+          id="close-telemetry-drawer-btn"
+          class="icon-btn"
+          title="Cerrar panel (Escape)"
+          aria-label="Cerrar panel de telemetría"
+        >
+          <svg class="svg-icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="drawer-body">
+      <!-- Compact System Metadata Strip -->
+      <div class="drawer-meta-strip" id="connection-status-pill" data-status="online">
+        <div class="meta-strip-item">
+          <span class="micro-tag">ESTADO</span>
+          <span class="mono-val" id="system-status-text">EN LÍNEA</span>
+        </div>
+        <div class="meta-strip-item">
+          <span class="micro-tag">LATENCIA</span>
+          <span class="mono-val text-cyan" id="api-latency-ms">-- ms</span>
+        </div>
+        <div class="meta-strip-item">
+          <span class="micro-tag">UPTIME</span>
+          <span class="mono-val" id="uptime-readout">00h 00m</span>
+        </div>
+      </div>
+
+      <!-- Hardware Alert Banner -->
+      <div id="telemetry-alerts" class="alert-banner hidden" role="status" aria-live="polite">
+        <svg class="svg-icon icon-sm alert-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+          <path d="M12 9v4"></path>
+          <path d="M12 17h.01"></path>
+        </svg>
+        <span id="telemetry-alerts-text">Sin alertas activas en el sistema.</span>
+      </div>
+
+      <!-- CPU Gauge Card -->
+      <div class="instrument-box" id="cpu-instrument-box">
+        <div class="instrument-header">
+          <span class="micro-label">Procesador (CPU)</span>
+          <span class="mono-sub" id="cpu-temp">TEMP OK</span>
+        </div>
+        <div class="gauge-row">
+          <div class="radial-gauge-wrap">
+            <svg class="radial-gauge" viewBox="0 0 100 100" aria-hidden="true">
+              <circle class="gauge-track" cx="50" cy="50" r="40"></circle>
+              <circle
+                id="cpu-gauge-ring"
+                class="gauge-fill"
+                cx="50"
+                cy="50"
+                r="40"
+                stroke-dasharray="251.32"
+                stroke-dashoffset="251.32"
+              ></circle>
+            </svg>
+            <div class="gauge-center-value">
+              <span id="cpu-percent" class="gauge-num">0.0</span>
+              <span class="gauge-unit">%</span>
+            </div>
+          </div>
+          <div class="instrument-specs">
+            <div class="spec-line">
+              <span class="spec-key">Núcleos</span>
+              <span class="spec-val" id="cpu-cores">--P / --L</span>
+            </div>
+            <div class="spec-line">
+              <span class="spec-key">Frecuencia</span>
+              <span class="spec-val" id="cpu-freq">---- MHz</span>
+            </div>
+            <div class="spec-line">
+              <span class="spec-key">Estado</span>
+              <span class="spec-val" id="cpu-state-label">ESTABLE</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RAM Gauge Card -->
+      <div class="instrument-box" id="ram-instrument-box">
+        <div class="instrument-header">
+          <span class="micro-label">Memoria Física (RAM)</span>
+          <span class="mono-sub" id="ram-swap">SWAP 0%</span>
+        </div>
+        <div class="gauge-row">
+          <div class="radial-gauge-wrap">
+            <svg class="radial-gauge" viewBox="0 0 100 100" aria-hidden="true">
+              <circle class="gauge-track" cx="50" cy="50" r="40"></circle>
+              <circle
+                id="ram-gauge-ring"
+                class="gauge-fill"
+                cx="50"
+                cy="50"
+                r="40"
+                stroke-dasharray="251.32"
+                stroke-dashoffset="251.32"
+              ></circle>
+            </svg>
+            <div class="gauge-center-value">
+              <span id="ram-percent" class="gauge-num">0.0</span>
+              <span class="gauge-unit">%</span>
+            </div>
+          </div>
+          <div class="instrument-specs">
+            <div class="spec-line">
+              <span class="spec-key">Uso / Total</span>
+              <span class="spec-val" id="ram-used-total">0.0 / 0.0 GB</span>
+            </div>
+            <div class="spec-line">
+              <span class="spec-key">Disponible</span>
+              <span class="spec-val" id="ram-avail">0.0 GB</span>
+            </div>
+            <div class="spec-line">
+              <span class="spec-key">Umbral</span>
+              <span class="spec-val" id="ram-threshold-label">&lt; 85% NOMINAL</span>
+            </div>
+          </div>
+        </div>
+        <div class="meter-bar-track" title="Nivel de saturación de memoria RAM">
+          <div id="ram-progress-bar" class="meter-bar-fill" style="width: 0%"></div>
+        </div>
+      </div>
+
+      <!-- Full-Width Storage Card (Zero Truncation!) -->
+      <div class="instrument-box">
+        <div class="instrument-header">
+          <span class="micro-label">Almacenamiento (<span id="disk-mount">C:\</span>)</span>
+          <span class="mono-val text-cyan" id="disk-percent">0.0%</span>
+        </div>
+        <div class="storage-summary-row">
+          <span class="sub-big-val" id="disk-free">-- GB LIBRES</span>
+          <span class="mono-sub">Usado: <strong id="disk-used-total" class="mono-val">0.0 / 0.0 GB</strong></span>
+        </div>
+        <div class="meter-bar-track compact">
+          <div id="disk-progress-bar" class="meter-bar-fill" style="width: 0%"></div>
+        </div>
+      </div>
+
+      <!-- Full-Width Network & Power Card (Zero Wrapping!) -->
+      <div class="instrument-box">
+        <div class="instrument-header">
+          <span class="micro-label">Red &amp; Energía</span>
+          <span class="mono-sub" id="net-status">ONLINE</span>
+        </div>
+        <div class="instrument-specs">
+          <div class="spec-line">
+            <span class="spec-key">Tráfico TX / RX</span>
+            <span class="spec-val" id="net-traffic">↑ 0.0 MB · ↓ 0.0 MB</span>
+          </div>
+          <div class="spec-line">
+            <span class="spec-key">Energía</span>
+            <span class="spec-val" id="battery-status">AC CONECTADO</span>
+          </div>
+          <div class="spec-line">
+            <span class="spec-key">Plataforma</span>
+            <span class="spec-val" id="platform-info">WINDOWS / LINUX</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top 5 Active Processes Table -->
+      <div class="processes-section">
+        <div class="section-subheader">
+          <span class="micro-label">Top 5 Procesos en Memoria</span>
+          <span class="mono-sub" id="telemetry-updated-at">SYNC --:--:--</span>
+        </div>
+        <div class="table-container">
+          <table class="tactical-table" aria-label="Top 5 procesos activos en memoria">
+            <thead>
+              <tr>
+                <th>PROCESO</th>
+                <th>PID</th>
+                <th class="num-col">RAM (MB)</th>
+                <th class="num-col">% MEM</th>
+              </tr>
+            </thead>
+            <tbody id="top-processes-body">
+              <tr>
+                <td colspan="4" class="empty-row">Sincronizando telemetría del sistema...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Quick System Audio Controls -->
+      <div class="drawer-utility-row">
+        <button
+          type="button"
+          id="qa-vol-up"
+          class="tactical-btn utility-half-btn quick-action-btn"
+          data-command="sube el volumen"
+        >
+          <svg class="svg-icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+          </svg>
+          <span>Subir Volumen</span>
+        </button>
+        <button
+          type="button"
+          id="qa-vol-down"
+          class="tactical-btn utility-half-btn quick-action-btn"
+          data-command="baja el volumen"
+        >
+          <svg class="svg-icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+          </svg>
+          <span>Bajar Volumen</span>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ====================================================================
+       DRAWER 2: ESTUDIO DE VISIÓN MULTIMODAL (SLIDE-OVER 400PX)
+       ==================================================================== -->
+  <aside
+    id="vision-drawer"
+    class="spatial-drawer"
+    aria-labelledby="vision-heading"
+    aria-hidden="true"
+  >
+    <div class="drawer-header">
+      <div class="drawer-title-group">
+        <svg class="svg-icon icon-sm text-cyan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+          <circle cx="12" cy="12" r="3"></circle>
+        </svg>
+        <h2 id="vision-heading" class="drawer-title">Estudio de Visión IA</h2>
+      </div>
+      <div class="drawer-header-actions">
+        <span class="mono-sub" id="vision-meta-badge">VLM READY</span>
+        <button
+          type="button"
+          id="close-vision-drawer-btn"
+          class="icon-btn"
+          title="Cerrar panel (Escape)"
+          aria-label="Cerrar estudio de visión"
+        >
+          <svg class="svg-icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="drawer-body">
+      <form id="vision-form" class="vision-controls">
+        <div class="vision-field-row">
+          <label for="vision-mode-select" class="micro-label">Modo de Inspección</label>
+          <select id="vision-mode-select" class="tactical-select">
+            <option value="general">General — Inspección de Escritorio</option>
+            <option value="debug">Debug — Depuración de Código y Consola</option>
+            <option value="ux_audit">UX Audit — Auditoría de Interfaz y Contraste</option>
+            <option value="biomedical_pid">Biomédica / PID — Señales y Lazo de Control</option>
+          </select>
+        </div>
+
+        <div class="vision-field-row">
+          <label for="vision-query-input" class="micro-label">Consulta Visual Específica</label>
+          <input
+            type="text"
+            id="vision-query-input"
+            class="command-input compact-input"
+            value="¿Qué hay en mi pantalla y qué recomendaciones técnicas tienes?"
+            placeholder="Ej: Analiza el error en la terminal o la gráfica PID..."
+          />
+        </div>
+
+        <button type="submit" id="vision-capture-btn" class="tactical-btn vision-trigger-btn">
+          <svg class="svg-icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+          <span>Capturar y Analizar Pantalla</span>
+        </button>
+      </form>
+
+      <!-- Captured Screenshot Frame -->
+      <div class="vision-viewport" id="vision-preview-container">
+        <div id="vision-empty-state" class="vision-empty-state">
+          <svg class="svg-icon icon-lg text-cyan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3 7V5a2 2 0 0 1 2-2h2"></path>
+            <path d="M17 3h2a2 2 0 0 1 2 2v2"></path>
+            <path d="M21 17v2a2 2 0 0 1-2 2h-2"></path>
+            <path d="M7 21H5a2 2 0 0 1-2-2v-2"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+          <p>Presiona <strong>Capturar y Analizar Pantalla</strong> o di <em>"Ultrón, mira mi pantalla"</em> para inspeccionar tu escritorio en vivo.</p>
+        </div>
+        <div id="vision-image-wrapper" class="vision-image-wrapper hidden">
+          <img
+            id="vision-preview-img"
+            class="vision-preview-img"
+            src=""
+            alt="Captura de pantalla del escritorio analizada por Ultrón"
+          />
+          <div class="vision-img-overlay">
+            <span id="vision-resolution-tag" class="mono-val">1280×720</span>
+            <span class="micro-tag">Clic para ampliar</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vision Analysis Output -->
+      <div class="vision-output-box">
+        <div class="section-subheader">
+          <span class="micro-label">Diagnóstico Visual de Ultrón</span>
+          <span class="mono-sub" id="vision-latency-tag">-- ms</span>
+        </div>
+        <div id="vision-analysis-output" class="vision-analysis-text">
+          Esperando captura de escritorio...
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ====================================================================
+       21ST.DEV / RAYCAST FLOATING COMMAND PALETTE MODAL (Ctrl + K)
+       ==================================================================== -->
+  <div
+    id="command-palette-modal"
+    class="cmd-palette-overlay hidden"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Paleta de Comandos Rápidos de Ultrón"
+  >
+    <div class="cmd-palette-dialog">
+      <div class="cmd-palette-search-bar">
+        <svg class="svg-icon icon-md text-cyan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="m21 21-4.3-4.3"></path>
+        </svg>
+        <input
+          type="text"
+          id="cmd-palette-input"
+          class="cmd-palette-input"
+          placeholder="Buscar proyecto, acción del sistema o modo de visión multimodal..."
+          autocomplete="off"
+          aria-label="Filtrar comandos rápidos"
+        />
+        <button type="button" id="cmd-palette-close-btn" class="kbd-badge kbd-btn" title="Cerrar (Escape)">
+          ESC
+        </button>
+      </div>
+
+      <div id="cmd-palette-list" class="cmd-palette-list" role="listbox" aria-label="Comandos disponibles">
+        <!-- Populated and filtered dynamically in app.js -->
+      </div>
+
+      <div class="cmd-palette-footer">
+        <div class="cmd-footer-hint">
+          <kbd class="kbd-badge">↑</kbd>
+          <kbd class="kbd-badge">↓</kbd>
+          <span>Navegar</span>
+        </div>
+        <div class="cmd-footer-hint">
+          <kbd class="kbd-badge">↵</kbd>
+          <span>Ejecutar</span>
+        </div>
+        <div class="cmd-footer-hint">
+          <kbd class="kbd-badge">ESC</kbd>
+          <span>Cerrar</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       LIGHTBOX MODAL FOR FULL-RESOLUTION SCREENSHOT INSPECTION
+       ==================================================================== -->
+  <div id="vision-lightbox-modal" class="lightbox-modal hidden" role="dialog" aria-modal="true" aria-label="Vista ampliada de captura de pantalla">
+    <div class="lightbox-content">
+      <div class="lightbox-header">
+        <span class="mono-val" id="lightbox-caption">CAPTURA DE ESCRITORIO // ULTRÓN VISION</span>
+        <button type="button" id="lightbox-close-btn" class="tactical-btn">Cerrar [ESC]</button>
+      </div>
+      <div class="lightbox-body">
+        <img id="lightbox-img" src="" alt="Captura de pantalla ampliada" />
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       JARVIS PRO FLOATING WAVEFORM MINI-PILL (Inspired by src/waveform.html)
+       ==================================================================== -->
+  <div id="mini-pill-dock" class="mini-pill-dock hidden" role="region" aria-label="Píldora flotante de voz de Ultrón">
+    <button
+      type="button"
+      id="mini-pill-mic-btn"
+      class="mini-pill-core"
+      title="Clic para activar/interrumpir voz"
+    >
+      <span class="mini-pill-dot" id="mini-pill-dot"></span>
+      <div class="mini-waveform-bars" id="mini-waveform-bars" aria-hidden="true">
+        <span class="mw-bar"></span>
+        <span class="mw-bar"></span>
+        <span class="mw-bar"></span>
+        <span class="mw-bar"></span>
+        <span class="mw-bar"></span>
+        <span class="mw-bar"></span>
+        <span class="mw-bar"></span>
+      </div>
+      <span class="mini-pill-label" id="mini-pill-text">ULTRÓN EN LÍNEA</span>
+    </button>
+    <button
+      type="button"
+      id="mini-pill-expand-btn"
+      class="mini-pill-expand-btn"
+      title="Restaurar vista espacial completa (Escape)"
+      aria-label="Restaurar vista espacial completa"
+    >
+      <svg class="svg-icon icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <polyline points="15 3 21 3 21 9"></polyline>
+        <polyline points="9 21 3 21 3 15"></polyline>
+        <line x1="21" y1="3" x2="14" y2="10"></line>
+        <line x1="3" y1="21" x2="10" y2="14"></line>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Hidden Neural TTS Audio Element wired to WebAudio AnalyserNode -->
+  <audio id="ultron-audio-player" preload="auto" crossorigin="anonymous"></audio>
+
+  <script src="/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+# Core TTS & Audio
+pyttsx3>=2.90
+edge-tts>=6.1.12
+SpeechRecognition>=3.10.4
+
+# Pilar 3: STT Offline de baja latencia
+faster-whisper>=1.0.3
+
+# Pilar 2: Wake-Word Detection (opcional, con fallback inteligente integrado)
+openwakeword>=0.6.0
+
+# Pilar 1 & 6: Inteligencia Artificial Generativa y Visión Multimodal (Gemini / Ollama)
+google-genai>=1.0.0
+requests>=2.31.0
+Pillow>=10.0.0
+
+# Pilar 5: Telemetría de Hardware y Procesos en Tiempo Real
+psutil>=5.9.8
+
+# Utilidades y Automatización de Escritorio
+wikipedia>=1.4.0
+PyAutoGUI>=0.9.54
+pyjokes>=0.6.0
+python-dotenv>=1.0.1
