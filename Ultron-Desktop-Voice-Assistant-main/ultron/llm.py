@@ -224,7 +224,14 @@ class UltronBrain:
             from google.genai import types
 
             client = genai.Client(api_key=self.config.gemini_api_key)
-            models_to_try = [self.config.gemini_model, "gemini-2.0-flash", "gemini-1.5-flash", "gemini-1.5-pro"]
+            models_to_try = [
+                self.config.gemini_model,
+                "gemini-3.5-flash-lite",
+                "gemini-3.8-flash",
+                "gemini-3.5-flash",
+                "gemini-2.5-flash",
+                "gemini-2.0-flash",
+            ]
             seen: set[str] = set()
             unique_models = [m for m in models_to_try if m and not (m in seen or seen.add(m))]
 
@@ -266,17 +273,36 @@ class UltronBrain:
             from google.genai import types
 
             client = genai.Client(api_key=self.config.gemini_api_key)
-            model_name = self.config.gemini_model or "gemini-2.0-flash"
+            models_to_try = [
+                self.config.gemini_model,
+                "gemini-3.5-flash-lite",
+                "gemini-3.8-flash",
+                "gemini-3.5-flash",
+                "gemini-2.5-flash",
+                "gemini-2.0-flash",
+            ]
+            seen: set[str] = set()
+            unique_models = [m for m in models_to_try if m and not (m in seen or seen.add(m))]
 
-            response_stream = client.models.generate_content_stream(
-                model=model_name,
-                contents=prompt,
-                config=types.GenerateContentConfig(
-                    system_instruction=system_prompt,
-                    temperature=0.6,
-                    max_output_tokens=250,
-                ),
-            )
+            response_stream = None
+            for model_name in unique_models:
+                try:
+                    response_stream = client.models.generate_content_stream(
+                        model=model_name,
+                        contents=prompt,
+                        config=types.GenerateContentConfig(
+                            system_instruction=system_prompt,
+                            temperature=0.6,
+                            max_output_tokens=250,
+                        ),
+                    )
+                    break
+                except Exception as model_err:
+                    logger.debug("Error iniciando stream con modelo '%s': %s", model_name, model_err)
+                    continue
+
+            if response_stream is None:
+                return ""
 
             full_reply_parts: List[str] = []
             sentence_buffer = ""
