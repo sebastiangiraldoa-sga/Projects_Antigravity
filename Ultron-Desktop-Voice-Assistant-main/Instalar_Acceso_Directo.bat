@@ -1,10 +1,10 @@
 @echo off
 chcp 65001 >nul
-title Instalador de Acceso Directo — Ultrón AI
+title Instalador de Acceso Directo — HALCÓN AI
 cd /d "%~dp0"
 
 echo ====================================================================
-echo        INSTALADOR DE ACCESO DIRECTO PARA ULTRÓN AI EN WINDOWS
+echo        INSTALADOR DE ACCESO DIRECTO PARA HALCÓN AI EN WINDOWS
 echo ====================================================================
 echo.
 echo Creando los accesos directos en tu Escritorio de Windows...

@@ -51,19 +51,23 @@ $wshShell = New-Object -ComObject WScript.Shell
 
 Write-Host ""
 Write-Host "==================================================================" -ForegroundColor Cyan
-Write-Host "   CONFIGURANDO ACCESOS DIRECTOS DE ULTRON AI EN TU ESCRITORIO   " -ForegroundColor Cyan
+Write-Host "   CONFIGURANDO ACCESOS DIRECTOS DE HALCÓN AI EN TU ESCRITORIO   " -ForegroundColor Cyan
 Write-Host "==================================================================" -ForegroundColor Cyan
 Write-Host "[*] Raiz del proyecto: $projectRoot" -ForegroundColor DarkGray
 Write-Host "[*] Carpeta Escritorio: $desktopPath" -ForegroundColor DarkGray
 
-# Limpiar posibles accesos directos viejos o con caracteres especiales (mojibake)
+# Limpiar posibles accesos directos viejos
 $oldNames = @(
     "Ultrón AI.lnk",
     "UltrÃ³n AI.lnk",
     "Ultrón AI (Consola).lnk",
     "UltrÃ³n AI (Consola).lnk",
     "Ultron AI.lnk",
-    "Ultron AI (Consola).lnk"
+    "Ultron AI (Consola).lnk",
+    "HALCÓN AI.lnk",
+    "HALCON AI.lnk",
+    "HALCÓN AI (Consola).lnk",
+    "HALCON AI (Consola).lnk"
 )
 foreach ($old in $oldNames) {
     $oldFile = Join-Path $desktopPath $old
@@ -72,42 +76,42 @@ foreach ($old in $oldNames) {
     }
 }
 
-# 1. Crear Acceso Directo Principal: Ultron AI (Modo App Stark HUD)
+# 1. Crear Acceso Directo Principal: HALCÓN AI (Modo App Stark HUD)
 try {
-    $mainShortcutPath = Join-Path $desktopPath "Ultron AI.lnk"
+    $mainShortcutPath = Join-Path $desktopPath "HALCON AI.lnk"
     $mainShortcut = $wshShell.CreateShortcut($mainShortcutPath)
     $mainShortcut.TargetPath = $wscriptExe
     $mainShortcut.Arguments = "`"$vbsPath`""
     $mainShortcut.WorkingDirectory = $projectRoot
-    $mainShortcut.Description = "Ultron AI Voice OS & Asistente Jarvis - Sebastian Giraldo"
+    $mainShortcut.Description = "HALCON AI Voice OS & Asistente Inteligente - Sebastian Giraldo"
     if (Test-Path $iconPath) {
         $mainShortcut.IconLocation = "$iconPath,0"
     }
-    $mainShortcut.Hotkey = "Ctrl+Alt+U"
+    $mainShortcut.Hotkey = "Ctrl+Alt+H"
     $mainShortcut.Save()
-    Write-Host "[OK] Creado: Ultron AI.lnk (Modo App Silencioso)" -ForegroundColor Green
-    Write-Host "     -> Atajo global asignado: Ctrl + Alt + U" -ForegroundColor Yellow
+    Write-Host "[OK] Creado: HALCON AI.lnk (Modo App Silencioso)" -ForegroundColor Green
+    Write-Host "     -> Atajo global asignado: Ctrl + Alt + H" -ForegroundColor Yellow
 } catch {
     Write-Host "[!] Error creando acceso directo silencioso: $_" -ForegroundColor Red
 }
 
-# 2. Crear Acceso Directo de Depuracion: Ultron AI (Consola)
+# 2. Crear Acceso Directo de Depuracion: HALCÓN AI (Consola)
 try {
-    $debugShortcutPath = Join-Path $desktopPath "Ultron AI (Consola).lnk"
+    $debugShortcutPath = Join-Path $desktopPath "HALCON AI (Consola).lnk"
     $debugShortcut = $wshShell.CreateShortcut($debugShortcutPath)
     $debugShortcut.TargetPath = $batPath
     $debugShortcut.WorkingDirectory = $projectRoot
-    $debugShortcut.Description = "Ultron AI Voice OS (Modo Consola con Logs)"
+    $debugShortcut.Description = "HALCON AI Voice OS (Modo Consola con Logs)"
     if (Test-Path $iconPath) {
         $debugShortcut.IconLocation = "$iconPath,0"
     }
     $debugShortcut.Save()
-    Write-Host "[OK] Creado: Ultron AI (Consola).lnk (Modo con Terminal)" -ForegroundColor Green
+    Write-Host "[OK] Creado: HALCON AI (Consola).lnk (Modo con Terminal)" -ForegroundColor Green
 } catch {
     Write-Host "[!] Error creando acceso directo de consola: $_" -ForegroundColor Red
 }
 
-# 3. Registrar en el Menu Inicio de Windows (Para que aparezca al presionar tecla Windows y buscar 'Ultron')
+# 3. Registrar en el Menu Inicio de Windows
 try {
     $programsPath = $null
     try {
@@ -134,17 +138,17 @@ try {
             }
         }
 
-        $startMenuShortcutPath = Join-Path $programsPath "Ultron AI.lnk"
+        $startMenuShortcutPath = Join-Path $programsPath "HALCON AI.lnk"
         $startShortcut = $wshShell.CreateShortcut($startMenuShortcutPath)
         $startShortcut.TargetPath = $wscriptExe
         $startShortcut.Arguments = "`"$vbsPath`""
         $startShortcut.WorkingDirectory = $projectRoot
-        $startShortcut.Description = "Ultron AI Voice OS & Asistente Jarvis - Sebastian Giraldo"
+        $startShortcut.Description = "HALCON AI Voice OS & Asistente Inteligente - Sebastian Giraldo"
         if (Test-Path $iconPath) {
             $startShortcut.IconLocation = "$iconPath,0"
         }
         $startShortcut.Save()
-        Write-Host "[OK] Integrado en Menu Inicio: Ahora puedes buscar 'Ultron' en Windows" -ForegroundColor Green
+        Write-Host "[OK] Integrado en Menu Inicio: Ahora puedes buscar 'Halcon' en Windows" -ForegroundColor Green
     }
 } catch {
     Write-Host "[!] No se pudo registrar en Menu Inicio (opcional): $_" -ForegroundColor DarkGray
@@ -152,9 +156,9 @@ try {
 
 Write-Host ""
 Write-Host "==================================================================" -ForegroundColor Cyan
-Write-Host " [OK] Ultron ahora esta integrado en tu sistema Windows 11:       " -ForegroundColor Green
-Write-Host "   - 1 Clic en tu Escritorio (Ultron AI)" -ForegroundColor White
-Write-Host "   - Busqueda de Windows (Tecla Win + 'Ultron')" -ForegroundColor White
-Write-Host "   - Atajo de teclado global: Ctrl + Alt + U" -ForegroundColor Yellow
+Write-Host " [OK] HALCON AI ahora esta integrado en tu sistema Windows:       " -ForegroundColor Green
+Write-Host "   - 1 Clic en tu Escritorio (HALCON AI)" -ForegroundColor White
+Write-Host "   - Busqueda de Windows (Tecla Win + 'Halcon')" -ForegroundColor White
+Write-Host "   - Atajo de teclado global: Ctrl + Alt + H" -ForegroundColor Yellow
 Write-Host "==================================================================" -ForegroundColor Cyan
 Write-Host ""
