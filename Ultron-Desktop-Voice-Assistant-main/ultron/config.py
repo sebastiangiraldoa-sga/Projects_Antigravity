@@ -26,7 +26,7 @@ class UltronConfig:
     """Configuración global del asistente Ultrón."""
 
     assistant_name: str = field(
-        default_factory=lambda: os.getenv("ULTRON_NAME", "Ultrón")
+        default_factory=lambda: os.getenv("ULTRON_NAME", "HALCÓN")
     )
     user_name: str = field(
         default_factory=lambda: os.getenv("ULTRON_USER_NAME", "Sebastián")
@@ -51,7 +51,8 @@ class UltronConfig:
         default_factory=lambda: [
             w.strip().lower()
             for w in os.getenv(
-                "ULTRON_WAKE_WORDS", "ultron,ultrón,hey ultron,oye ultron,oye ultrón"
+                "ULTRON_WAKE_WORDS",
+                "halcon,halcón,hey halcon,hey halcón,oye halcon,oye halcón,ultron,ultrón,hey ultron,oye ultron",
             ).split(",")
             if w.strip()
         ]

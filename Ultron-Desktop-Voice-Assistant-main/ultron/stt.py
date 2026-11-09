@@ -21,7 +21,7 @@ from ultron.strings import detect_language, tr
 logger = logging.getLogger("ultron.stt")
 
 ULTRON_WHISPER_PROMPT = (
-    "Ultrón, Hey Ultrón, Oye Ultrón, Sebastián, Biomédica, IA, Machine Learning, Liofilizados, Bioinstrumentación, GitHub, "
+    "HALCÓN, Halcón, Hey Halcón, Oye Halcón, Ultrón, Hey Ultrón, Sebastián, Biomédica, IA, Machine Learning, Liofilizados, Bioinstrumentación, GitHub, "
     "¿qué hora es?, ¿qué fecha es hoy?, analiza mi sistema, diagnóstico del sistema, telemetría, "
     "¿cuáles son mis tareas?, ¿qué clases tengo?, mira mi pantalla, analiza mi pantalla, abre YouTube, "
     "What time is it?, How is my PC running?, What are my tasks?, Look at my screen, Open GitHub."

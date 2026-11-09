@@ -421,18 +421,31 @@ def run_hud_server(
         server = create_hud_server(assistant=assistant, host=host, port=0)
         bound_port = server.server_address[1]
 
-    url = f"http://{host}:{bound_port}"
+    local_ip = "127.0.0.1"
+    try:
+        import socket
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        local_ip = s.getsockname()[0]
+        s.close()
+    except Exception:
+        pass
+
+    browser_url = f"http://127.0.0.1:{bound_port}" if host in ("0.0.0.0", "") else f"http://{host}:{bound_port}"
+    mobile_url = f"http://{local_ip}:{bound_port}"
+
     assistant_name = assistant.config.load_assistant_name()
     print("\n" + "═" * 74)
-    print(f"⚡ {assistant_name.upper()} v4.0 — STARK HUD HOLOGRÁFICO ACTIVO")
-    print(f"👤 Operador : {assistant.config.user_name}")
-    print(f"🌐 URL HUD  : {url}")
-    print("🎙️ Audio    : Voz Neural (Edge Neural TTS / Cloud Neural) + WebAudio Reactor")
-    print("💡 Consejo  : Presiona Ctrl+C en esta terminal para detener el servidor.")
+    print(f"⚡ {assistant_name.upper()} — STARK HUD HOLOGRÁFICO ACTIVO")
+    print(f"👤 Operador   : {assistant.config.user_name}")
+    print(f"🌐 PC Local   : {browser_url}")
+    print(f"📱 Móvil (LAN): {mobile_url} (abre esta URL desde tu celular en la misma Wi-Fi)")
+    print("🎙️ Audio      : Voz Neural (Edge Neural TTS / Cloud Neural) + WebAudio Reactor")
+    print("💡 Consejo    : Presiona Ctrl+C en esta terminal para detener el servidor.")
     print("═" * 74 + "\n")
 
     if open_browser:
-        threading.Timer(0.4, launch_hud_browser, args=(url,)).start()
+        threading.Timer(0.4, launch_hud_browser, args=(browser_url,)).start()
 
     try:
         server.serve_forever()

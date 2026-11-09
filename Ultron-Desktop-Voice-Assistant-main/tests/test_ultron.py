@@ -105,6 +105,12 @@ class TestUltronAssistant(unittest.TestCase):
         resp = self.assistant.process_command("ultron abre spotify")
         self.assertIn("Spotify", resp)
 
+    def test_halcon_prefix_strip_and_bare_name(self) -> None:
+        resp = self.assistant.process_command("halcón abre spotify")
+        self.assertIn("Spotify", resp)
+        bare_resp = self.assistant.process_command("halcón")
+        self.assertIn("Te escucho fuerte y claro", bare_resp)
+
     def test_ultron_bare_name_acknowledgement(self) -> None:
         resp = self.assistant.process_command("ultron")
         self.assertIn("Te escucho fuerte y claro", resp)

@@ -58,14 +58,13 @@ class UltronAssistant:
 
     def _strip_wake_prefix(self, text: str) -> str:
         """
-        Elimina invocaciones como 'ultrón', 'hey ultrón', 'oye ultrón', y homófonos
-        comunes de transcripción fonética ('el trono', 'al trono', 'a una ultron', 'el tron')
-        al inicio de la frase incluso cuando se ejecuta con `--no-wake`.
+        Elimina invocaciones como 'halcón', 'hey halcón', 'oye halcón', 'ultrón', 'hey ultrón',
+        y homófonos comunes de transcripción fonética al inicio de la frase incluso con `--no-wake`.
         """
         cleaned = text.strip()
         pattern = (
             r"^\s*(?:hey\s+|oye\s+|hola\s+|ok\s+|a\s+una\s+|a\s+un\s+|al\s+|el\s+)?"
-            r"(?:ultr[oó]n|mult[oó]n|trono|tron|trozo|oultron|oltron|el\s+trono|al\s+trono)"
+            r"(?:halc[oó]n|alc[oó]n|alcon|falcon|ultr[oó]n|mult[oó]n|trono|tron|trozo|oultron|oltron|el\s+trono|al\s+trono)"
             r"\b[\s,.:;!?-]*(.*)$"
         )
         match = re.match(pattern, cleaned, flags=re.IGNORECASE)

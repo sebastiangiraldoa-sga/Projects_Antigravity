@@ -38,6 +38,12 @@ def parse_args() -> argparse.Namespace:
         help="Puerto local para el servidor Stark HUD (por defecto: 8765).",
     )
     parser.add_argument(
+        "--host",
+        type=str,
+        default="0.0.0.0",
+        help="Dirección IP de enlace para Stark HUD (0.0.0.0 para acceso desde móvil/red local, o 127.0.0.1).",
+    )
+    parser.add_argument(
         "--text",
         action="store_true",
         help="Ejecuta Ultrón en modo interactivo por consola (sin requerir micrófono).",
@@ -125,7 +131,7 @@ def main() -> None:
     # Stark HUD v4.0 es la experiencia interactiva predeterminada a menos que se pida --cli o --text
     use_hud = args.hud or not (args.cli or args.text)
     if use_hud:
-        run_hud_server(assistant=assistant, port=args.port, open_browser=True)
+        run_hud_server(assistant=assistant, host=args.host, port=args.port, open_browser=True)
         return
 
     assistant.run_forever()
