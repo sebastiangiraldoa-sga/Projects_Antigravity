@@ -58,16 +58,10 @@ Write-Host "[*] Carpeta Escritorio: $desktopPath" -ForegroundColor DarkGray
 
 # Limpiar posibles accesos directos viejos
 $oldNames = @(
-    "Ultrón AI.lnk",
-    "UltrÃ³n AI.lnk",
-    "Ultrón AI (Consola).lnk",
-    "UltrÃ³n AI (Consola).lnk",
-    "Ultron AI.lnk",
-    "Ultron AI (Consola).lnk",
-    "HALCÓN AI.lnk",
-    "HALCON AI.lnk",
-    "HALCÓN AI (Consola).lnk",
-    "HALCON AI (Consola).lnk"
+    'Ultron AI.lnk',
+    'Ultron AI (Consola).lnk',
+    'HALCON AI.lnk',
+    'HALCON AI (Consola).lnk'
 )
 foreach ($old in $oldNames) {
     $oldFile = Join-Path $desktopPath $old
