@@ -33,6 +33,7 @@ import wikipedia
 from ultron.config import UltronConfig
 from ultron.jarvis_pro import FileOrganizerEngine, SmartDictationEngine
 from ultron.strings import tr
+from ultron.task_bridge import TaskSyncBridge
 from ultron.telemetry import UltronTelemetry
 from ultron.tts import UltronTTS
 from ultron.vision import UltronVision
@@ -107,6 +108,7 @@ class UltronSkills:
         self.vision = UltronVision(config=self.config)
         self.dictation = SmartDictationEngine(config=self.config)
         self.file_organizer = FileOrganizerEngine(user_name=self.config.user_name)
+        self.task_bridge = TaskSyncBridge(workspace_root=self.config.workspace_root)
 
     def greet(self, lang: str = "es") -> str:
         """Saluda a Sebastián según la hora del día."""
@@ -740,64 +742,45 @@ class UltronSkills:
 
     def get_academic_tasks(self, lang: str = "es") -> str:
         """
-        Lee el tablero de tareas pendientes (TAREAS.md) y genera un reporte hablado conciso
-        con las próximas entregas y compromisos de Sebastián.
+        Lee dinámicamente el tablero de tareas pendientes (TAREAS.md) y genera
+        un reporte hablado en tiempo real con las próximas entregas de Sebastián.
         """
-        tareas_path = None
-        candidates = [
-            Path("/home/antigravity/sebastiangiraldoa-sga/Projects_Antigravity/TAREAS.md"),
-            Path(__file__).resolve().parent.parent.parent / "TAREAS.md",
-            Path.cwd() / "TAREAS.md",
-            Path.cwd().parent / "TAREAS.md",
-        ]
-        for c in candidates:
-            if c.is_file():
-                tareas_path = c
-                break
-
-        if not tareas_path:
-            msg = (
-                f"{self.config.user_name}, no encontré el archivo TAREAS.md en tu repositorio. "
-                "Recuerda que tus entregas más próximas son el Laboratorio de Anestesia el 13 de Noviembre "
-                "y la Tarea 3 de Machine Learning el 14 de Noviembre."
-            )
-            self.tts.speak(msg, lang=lang)
-            return msg
-
-        try:
-            content = tareas_path.read_text(encoding="utf-8")
-            msg = (
-                f"{self.config.user_name}, aquí tienes tus prioridades académicas pendientes: "
-                "1. Viernes 13 de Noviembre: Laboratorio de Máquina de Anestesia en Bioinstrumentación 2. "
-                "2. Sábado 14 de Noviembre a las 11 de la mañana: Tarea 3 de Aprendizaje Automático. "
-                "3. Martes 17 de Noviembre a las 11:59 de la noche: Matriz de Gestión de Riesgo en Ingeniería Clínica 2. "
-                "Y recuerda que el viernes 13 en la mañana tienes la salida de campo a Candelaria para levantamiento de equipos del proyecto de liofilizados."
-            )
-        except Exception as e:
-            logger.warning(f"Error leyendo TAREAS.md: {e}")
-            msg = f"{self.config.user_name}, tus próximas entregas son el 13 de Noviembre: Laboratorio de Anestesia, y el 14 de Noviembre: Tarea 3 de Machine Learning."
-
-        self.tts.speak(msg, lang=lang)
-        return msg
+        summary = self.task_bridge.get_pending_summary(user_name=self.config.user_name)
+        self.tts.speak(summary, lang=lang)
+        return summary
 
     def get_academic_schedule(self, lang: str = "es") -> str:
         """
         Informa las clases programadas para el día de hoy según el horario académico de Sebastián.
         """
-        weekday = datetime.datetime.now().weekday()  # 0=Lunes, 6=Domingo
-        schedule_map = {
-            0: "Hoy lunes tienes Redes Neuronales Artificiales y Deep Learning de 6:30 a 9:30 de la noche.",
-            1: "Hoy martes tienes una jornada completa: Seminario de Ingeniería Biomédica de 2 a 4 de la tarde, Diseño Biomédico 2 de 4 a 6, y Visión Computacional con Deep Learning de 6:30 a 9:30 de la noche.",
-            2: "Hoy miércoles tienes Bioinstrumentación 2 de 2 a 4 de la tarde.",
-            3: "Hoy jueves tienes Ingeniería Clínica 2 de 2 a 5 de la tarde y Aprendizaje Automático de 6:30 a 9:30 de la noche.",
-            4: "Hoy viernes tienes Bioinstrumentación 2 de 2 a 5 de la tarde y Visión Computacional con Deep Learning de 6:30 a 9:30 de la noche.",
-            5: "Hoy sábado tienes Aprendizaje Automático de 7 a 11 de la mañana.",
-            6: "Hoy domingo no tienes clases programadas. Buen día para descansar o avanzar en proyectos.",
-        }
-        day_msg = schedule_map.get(weekday, "No tienes clases programadas para hoy.")
-        msg = f"{self.config.user_name}, {day_msg}"
+        schedule_msg = self.task_bridge.get_schedule_today(user_name=self.config.user_name)
+        self.tts.speak(schedule_msg, lang=lang)
+        return schedule_msg
+
+    def add_academic_task(self, raw_task_text: str, lang: str = "es") -> str:
+        """
+        Registra una nueva tarea académica por voz directamente en `TAREAS.md`.
+        """
+        ok, detail = self.task_bridge.add_task(raw_task_text)
+        if ok:
+            msg = f"{self.config.user_name}, he anotado tu nueva tarea en el tablero: {raw_task_text}."
+        else:
+            msg = f"{self.config.user_name}, {detail}"
         self.tts.speak(msg, lang=lang)
         return msg
+
+    def complete_academic_task(self, query: str, lang: str = "es") -> str:
+        """
+        Busca y marca una tarea como completada en `TAREAS.md` por comando de voz.
+        """
+        ok, detail = self.task_bridge.complete_task(query)
+        if ok:
+            msg = f"Excelente trabajo, {self.config.user_name}. {detail}"
+        else:
+            msg = f"{self.config.user_name}, {detail}"
+        self.tts.speak(msg, lang=lang)
+        return msg
+
 
 
 

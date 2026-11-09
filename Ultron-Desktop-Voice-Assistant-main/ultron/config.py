@@ -95,6 +95,7 @@ class UltronConfig:
     )
 
     # Rutas de datos persistentes
+    workspace_root: Path = field(default_factory=lambda: BASE_DIR.parent)
     name_file: Path = field(default_factory=lambda: DATA_DIR / "assistant_name.txt")
     notes_file: Path = field(default_factory=lambda: DATA_DIR / "notes.json")
     screenshots_dir: Path = field(default_factory=lambda: SCREENSHOTS_DIR)

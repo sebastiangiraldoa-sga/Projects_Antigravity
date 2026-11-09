@@ -25,9 +25,18 @@ class TestUltronAssistant(unittest.TestCase):
     def setUp(self) -> None:
         self.tmp_dir = tempfile.TemporaryDirectory()
         base = Path(self.tmp_dir.name)
+        (base / "TAREAS.md").write_text(
+            "# Tablero de Tareas\n\n## 📌 Prioridad Alta\n\n"
+            "1. **[Viernes 13 Nov]** `Bioinstrumentación 2`: **Laboratorio de máquina de anestesia**\n"
+            "   - Estado: `[ ] Pendiente`\n\n"
+            "2. **[Sábado 14 Nov]** `Aprendizaje Automático`: **Tarea 3**\n"
+            "   - Estado: `[ ] Pendiente`\n",
+            encoding="utf-8",
+        )
         self.config = UltronConfig(
-            assistant_name="Ultrón",
+            assistant_name="HALCÓN",
             user_name="Sebastián",
+            workspace_root=base,
             name_file=base / "assistant_name.txt",
             notes_file=base / "notes.json",
             screenshots_dir=base / "screenshots",
@@ -167,14 +176,21 @@ class TestUltronAssistant(unittest.TestCase):
         self.assertIn("Bola-Viga", resp)
 
     def test_academic_tasks_voice_routing(self) -> None:
-        resp = self.assistant.process_command("Ultrón, ¿cuáles son mis tareas?")
-        self.assertIn("prioridades académicas pendientes", resp)
-        self.assertIn("Bioinstrumentación 2", resp)
-        self.assertIn("Aprendizaje Automático", resp)
+        resp = self.assistant.process_command("Halcón, ¿cuáles son mis tareas?")
+        self.assertIn("Sebastián", resp)
+        self.assertIn("compromisos en tu agenda", resp)
+        self.assertIn("Bioinstrumentación", resp)
 
     def test_academic_schedule_voice_routing(self) -> None:
-        resp = self.assistant.process_command("Ultrón, ¿qué clases tengo hoy?")
+        resp = self.assistant.process_command("Halcón, ¿qué clases tengo hoy?")
         self.assertIn("Sebastián", resp)
+
+    def test_voice_add_and_complete_task_lifecycle(self) -> None:
+        resp_add = self.assistant.process_command("Halcón, anota esta tarea: Revisar calibración de manómetro")
+        self.assertIn("he anotado tu nueva tarea", resp_add)
+
+        resp_done = self.assistant.process_command("Halcón, marca como completada la tarea de manómetro")
+        self.assertIn("Excelente trabajo", resp_done)
 
 
     def test_spotify_direct_play_and_resume(self) -> None:
@@ -224,6 +240,33 @@ class TestUltronAssistant(unittest.TestCase):
             reply = self.assistant.brain.ask("cómo ajusto mi pid")
             self.assertIn("PID", reply)
             self.assertIn("Bola-Viga", reply)
+
+    def test_stream_ask_sentence_chunking(self) -> None:
+        self.assistant.config.gemini_api_key = "test_fake_gemini_key"
+        received_sentences = []
+
+        def mock_stream(prompt, system_prompt, on_sentence_callback=None):
+            sentences = [
+                "Hola Sebastián.",
+                "El modelo CNN está listo para entrenamiento.",
+                "¿Deseas iniciar ahora?",
+            ]
+            for s in sentences:
+                if on_sentence_callback:
+                    on_sentence_callback(s)
+            return " ".join(sentences)
+
+        with patch.object(self.assistant.brain, "stream_ask_gemini", side_effect=mock_stream):
+            full_reply = self.assistant.brain.stream_ask(
+                prompt="Estado del modelo",
+                on_sentence_callback=lambda s: received_sentences.append(s),
+            )
+
+            self.assertIn("Hola Sebastián.", received_sentences)
+            self.assertIn("El modelo CNN está listo para entrenamiento.", received_sentences)
+            self.assertIn("¿Deseas iniciar ahora?", received_sentences)
+            self.assertEqual(len(received_sentences), 3)
+            self.assertIn("Hola Sebastián", full_reply)
 
 
 if __name__ == "__main__":

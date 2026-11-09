@@ -338,6 +338,28 @@ class UltronAssistant:
         if any(trigger in query for trigger in task_triggers):
             return self.skills.get_academic_tasks(lang=out_lang)
 
+        # 7.2.1 Anotar nueva tarea en TAREAS.md ("anota esta tarea: ...", "agrega la tarea: ...", "nueva tarea: ...")
+        add_task_match = re.match(
+            r"^(?:anota(?:r)?\s+(?:esta\s+)?tarea|agrega(?:r)?\s+(?:la\s+)?tarea|nueva\s+tarea|add\s+task)\s*[:,-]?\s*(.+)$",
+            stripped,
+            flags=re.IGNORECASE,
+        )
+        if add_task_match:
+            task_text = add_task_match.group(1).strip()
+            if task_text:
+                return self.skills.add_academic_task(task_text, lang=out_lang)
+
+        # 7.2.2 Marcar tarea como completada en TAREAS.md ("marca como completada la tarea ...", "completa la tarea ...", "ya entregué ...")
+        complete_task_match = re.match(
+            r"^(?:marca(?:r)?\s+como\s+completad[ao]|completa(?:r)?(?:\s+la)?|termin[eé](?:\s+la)?|ya\s+entregu[eé]|complete\s+task)\s+(?:tarea\s+)?(.+)$",
+            stripped,
+            flags=re.IGNORECASE,
+        )
+        if complete_task_match:
+            task_query = complete_task_match.group(1).strip()
+            if task_query:
+                return self.skills.complete_academic_task(task_query, lang=out_lang)
+
         # 7.3 Horario de Clases Semanal de Sebastián
         class_triggers = (
             "qué clases tengo hoy",

@@ -12,7 +12,7 @@ import logging
 import random
 import time
 import urllib.parse
-from typing import Optional
+from typing import Any, List, Optional
 
 import requests
 
@@ -102,6 +102,35 @@ class UltronBrain:
             return self._clean_for_tts(reply)
 
         return tr(reply_lang, "llm_fallback_unavailable")
+
+    def stream_ask(
+        self,
+        prompt: str,
+        input_lang: str = "es",
+        force_spanish_reply: bool = True,
+        on_sentence_callback: Optional[Any] = None,
+    ) -> str:
+        """
+        Envía una consulta abierta con streaming de oraciones en tiempo real para baja latencia de voz.
+        """
+        reply_lang = "es" if force_spanish_reply else input_lang
+        system_prompt = build_system_prompt(
+            self.config, response_lang=reply_lang, input_lang=input_lang
+        )
+
+        if self.config.gemini_api_key:
+            reply = self.stream_ask_gemini(
+                prompt=prompt,
+                system_prompt=system_prompt,
+                on_sentence_callback=on_sentence_callback,
+            )
+            if reply:
+                return self._clean_for_tts(reply)
+
+        full_reply = self.ask(prompt=prompt, input_lang=input_lang, force_spanish_reply=force_spanish_reply)
+        if full_reply and on_sentence_callback:
+            on_sentence_callback(full_reply)
+        return full_reply
 
     def generate_raw(
         self,
@@ -218,6 +247,68 @@ class UltronBrain:
         except Exception as exc:
             logger.warning("Error consultando Google Gemini: %s", exc)
         return None
+
+    def stream_ask_gemini(
+        self,
+        prompt: str,
+        system_prompt: str,
+        on_sentence_callback: Optional[Any] = None,
+    ) -> str:
+        """
+        Genera respuesta en streaming con Gemini 2.0 Flash y emite oraciones completas
+        al callback `on_sentence_callback` en tiempo real (Sentence-Chunking).
+        """
+        if not self.config.gemini_api_key:
+            return ""
+
+        try:
+            from google import genai
+            from google.genai import types
+
+            client = genai.Client(api_key=self.config.gemini_api_key)
+            model_name = self.config.gemini_model or "gemini-2.0-flash"
+
+            response_stream = client.models.generate_content_stream(
+                model=model_name,
+                contents=prompt,
+                config=types.GenerateContentConfig(
+                    system_instruction=system_prompt,
+                    temperature=0.6,
+                    max_output_tokens=250,
+                ),
+            )
+
+            full_reply_parts: List[str] = []
+            sentence_buffer = ""
+
+            for chunk in response_stream:
+                if chunk and chunk.text:
+                    full_reply_parts.append(chunk.text)
+                    sentence_buffer += chunk.text
+
+                    # Detectar fin de oración (. ! ? \n)
+                    while any(punct in sentence_buffer for punct in (".", "!", "?", "\n")):
+                        split_idx = -1
+                        for i, char in enumerate(sentence_buffer):
+                            if char in (".", "!", "?", "\n"):
+                                split_idx = i + 1
+                                break
+                        if split_idx != -1:
+                            completed_sentence = sentence_buffer[:split_idx].strip()
+                            sentence_buffer = sentence_buffer[split_idx:]
+                            clean_sentence = self._clean_for_tts(completed_sentence)
+                            if clean_sentence and on_sentence_callback:
+                                on_sentence_callback(clean_sentence)
+
+            # Resto del buffer final si quedó algo
+            rem = self._clean_for_tts(sentence_buffer.strip())
+            if rem and on_sentence_callback:
+                on_sentence_callback(rem)
+
+            return "".join(full_reply_parts).strip()
+        except Exception as exc:
+            logger.warning("Error en stream_ask_gemini: %s", exc)
+            return ""
 
     def _ask_deepseek(
         self,
