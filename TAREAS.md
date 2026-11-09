@@ -19,6 +19,7 @@
 
 ## 📅 Entregas Futuras (Noviembre)
 
+- **[Martes 17 Nov - 23:59]** `Ingeniería Clínica 2`: **Entrega de Matriz de gestión de riesgo**
 - **[Viernes 20 Nov]** `Bioinstrumentación 2`: **Video de presentación de Ventilación mecánica**
 - **[Viernes 27 Nov]** `Bioinstrumentación 2`: **Proyecto final**
 
@@ -27,12 +28,12 @@
 ## 📚 Tareas por Materia
 
 ### Ingeniería Biomédica (Pregrado)
+- **Ingeniería Clínica 2**:
+  - [ ] 17 Nov (23:59): Entrega de Matriz de gestión de riesgo
 - **Bioinstrumentación 2**:
   - [ ] 13 Nov: Laboratorio de máquina de anestesia
   - [ ] 20 Nov: Video de presentación de Ventilación mecánica
   - [ ] 27 Nov: Proyecto final
-- **Ingeniería Clínica 2**:
-  - [ ] *Sin tareas registradas*
 - **Redes Neuronales Artificiales y Deep Learning**:
   - [ ] *Sin tareas registradas*
 - **Seminario de Ingeniería Biomédica**:
