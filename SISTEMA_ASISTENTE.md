@@ -64,3 +64,10 @@ Para trabajar en paralelo y resolver procesos extensos con máxima rapidez y pre
    - Redacta informes técnicos de laboratorio (Máquina de Anestesia, Bioinstrumentación 2), análisis clínicos y memorias de proyecto en Markdown o Google Docs.
 4. **`research` (Investigador Académico & Codebase)**:
    - Subagente de exploración rápida de literatura, documentación de librerías y consultas en segundo plano.
+5. **`halcon_prompt_engineer` (Evolución de HALCÓN & Prompt Engineering)**:
+   - Administra, edita y perfecciona los prompts de sistema y habilidades de HALCÓN (`ultron/llm.py`, `ultron/vision.py`, `ultron/skills.py`). Adapta sus respuestas al perfil dual biomédico e IA de Sebastián.
+6. **`halcon_qa_tester` (Aseguramiento de Calidad & Estabilidad Operativa)**:
+   - Ejecuta suites de pruebas automatizadas con `pytest`, verifica endpoints REST del Stark HUD (`/api/*`), telemetría de hardware, tolerancia a fallos y ausencia de regresiones.
+7. **`halcon_gemini_integrator` (Puente de Integración Gemini & Cloud)**:
+   - Diseña el enlace más directo, eficiente y seguro entre HALCÓN y el proyecto de Gemini / Antigravity, sincronizando contexto académico, Google Calendar, Google Drive y streaming de respuestas de baja latencia.
+
