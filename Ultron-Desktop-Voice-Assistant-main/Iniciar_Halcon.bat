@@ -6,35 +6,35 @@ cd /d "%~dp0"
 
 echo ====================================================================
 echo               INICIANDO HALCÓN AI VOICE OS v5.2
-echo           Ing. Biomedica & IA: Sebastian Giraldo Acosta
+echo         Ing. Biomedica e IA - Sebastian Giraldo Acosta
 echo ====================================================================
 echo.
 
 :: 1. Verificar si existe entorno virtual local
 if exist "%~dp0.venv\Scripts\python.exe" (
     echo [*] Detectado entorno virtual (.venv)
-    set "RUN_CMD="%~dp0.venv\Scripts\python.exe""
+    set RUN_CMD="%~dp0.venv\Scripts\python.exe"
     goto :check_deps
 )
 if exist "%~dp0venv\Scripts\python.exe" (
     echo [*] Detectado entorno virtual (venv)
-    set "RUN_CMD="%~dp0venv\Scripts\python.exe""
+    set RUN_CMD="%~dp0venv\Scripts\python.exe"
     goto :check_deps
 )
 
 :: 2. Verificar lanzador py de Windows
 py -3 --version >nul 2>&1
-if %errorlevel% equ 0 (
+if not errorlevel 1 (
     echo [*] Detectado lanzador Python (py -3)
-    set "RUN_CMD=py -3"
+    set RUN_CMD=py -3
     goto :check_deps
 )
 
 :: 3. Verificar python en PATH
 python --version >nul 2>&1
-if %errorlevel% equ 0 (
+if not errorlevel 1 (
     echo [*] Detectado Python en PATH
-    set "RUN_CMD=python"
+    set RUN_CMD=python
     goto :check_deps
 )
 
@@ -54,14 +54,14 @@ exit /b 1
 :check_deps
 :: Verificar si falta la libreria requests u otras basicas en el entorno
 %RUN_CMD% -c "import requests" >nul 2>&1
-if %errorlevel% neq 0 (
+if errorlevel 1 (
     echo.
     echo [*] Detectamos que faltan librerias en este entorno de Python.
     echo [*] Instalando dependencias automaticamente desde requirements.txt...
     echo     (Esto solo se hace una vez, por favor espera un momento...)
     echo.
     %RUN_CMD% -m pip install -r requirements.txt
-    if %errorlevel% neq 0 (
+    if errorlevel 1 (
         echo.
         echo [ERROR] Fallo la instalacion automatica de librerias.
         echo Por favor ejecuta manualmente en tu terminal:
