@@ -51,20 +51,20 @@
   // 21st.dev / Raycast Command Palette Catalog
   const COMMAND_PALETTE_ITEMS = [
     {
-      id: 'cmd-nutricoach',
-      title: 'NutriCoach Pro',
-      subtitle: 'abre nutricoach — Lanzar plataforma de nutrición IA',
-      category: 'PROYECTO',
-      icon: SVG_ICONS.rocket,
-      action: () => sendCommand('abre nutricoach'),
+      id: 'cmd-tareas',
+      title: 'Mis Tareas',
+      subtitle: 'cuáles son mis tareas — Consultar entregas pendientes de TAREAS.md',
+      category: 'ACADÉMICO',
+      icon: SVG_ICONS.cube,
+      action: () => sendCommand('cuáles son mis tareas'),
     },
     {
-      id: 'cmd-inventario',
-      title: 'Inventario Web Pro',
-      subtitle: 'abre inventario — Lanzar sistema de gestión de inventario',
-      category: 'PROYECTO',
-      icon: SVG_ICONS.cube,
-      action: () => sendCommand('abre inventario'),
+      id: 'cmd-clases',
+      title: 'Horario de Hoy',
+      subtitle: 'qué clases tengo hoy — Consultar horario académico del día',
+      category: 'ACADÉMICO',
+      icon: SVG_ICONS.calendar,
+      action: () => sendCommand('qué clases tengo hoy'),
     },
     {
       id: 'cmd-calendar',
@@ -1386,7 +1386,7 @@
       const replyText = data.reply || 'Orden procesada correctamente.';
 
       appendChatMessage({
-        sender: 'Ultrón',
+        sender: 'HALCÓN',
         text: replyText,
         meta: `${elapsedMs} ms`,
         isUser: false,
@@ -1397,9 +1397,9 @@
     } catch (err) {
       state.isProcessing = false;
       const errMsg =
-        'Error de enlace con el núcleo local de Ultrón. Verifica que el servidor esté activo.';
+        'Error de enlace con el núcleo local de HALCÓN. Verifica que el servidor esté activo.';
       appendChatMessage({
-        sender: 'Ultrón',
+        sender: 'HALCÓN',
         text: errMsg,
         meta: 'Error',
         isUser: false,
@@ -1458,7 +1458,7 @@
       dom.visionAnalysisOutput.textContent = data.analysis || 'Inspección completada.';
 
       appendChatMessage({
-        sender: 'Ultrón Visión',
+        sender: 'HALCÓN Visión',
         text: data.analysis,
         meta: `${data.latency_ms || 0} ms · ${providerLabel}`,
         isUser: false,
@@ -1877,8 +1877,8 @@
 
     // Clean, calm welcome greeting
     appendChatMessage({
-      sender: 'Ultrón',
-      text: 'Hola Sebastián. Estoy en línea y escuchando. Puedes hablarme con naturalidad, escribir abajo o usar los accesos rápidos.',
+      sender: 'HALCÓN',
+      text: 'Hola Sebastián. Soy HALCÓN, tu asistente inteligente. Haz clic en el orbe central para activar el micrófono o usa los comandos rápidos.',
       isUser: false,
     });
 

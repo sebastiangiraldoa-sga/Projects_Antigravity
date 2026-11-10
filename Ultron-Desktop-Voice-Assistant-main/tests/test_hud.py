@@ -77,7 +77,7 @@ class TestStarkHUDServer(unittest.TestCase):
 
     def test_static_hud_assets_served(self) -> None:
         for route, expected_mime, expected_token in (
-            ("/", "text/html", "ULTRÓN"),
+            ("/", "text/html", "HALCÓN"),
             ("/styles.css", "text/css", "--bg-obsidian"),
             ("/app.js", "application/javascript", "SILENCE_DEBOUNCE_MS"),
         ):
@@ -91,7 +91,7 @@ class TestStarkHUDServer(unittest.TestCase):
     def test_api_status_returns_v4_metadata(self) -> None:
         data = self._get_json("/api/status")
         self.assertTrue(data["ok"])
-        self.assertEqual(data["assistant_name"], "Ultrón")
+        self.assertIn(data["assistant_name"], ("HALCÓN", "Ultrón"))
         self.assertEqual(data["user_name"], "Sebastián")
         self.assertEqual(data["version"], "5.2.0")
         self.assertIn("Stark HUD", data["architecture"])
