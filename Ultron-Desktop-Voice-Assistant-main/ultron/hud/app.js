@@ -1154,6 +1154,22 @@
     state.recognitionRunning = false;
   }
 
+  function releaseMicrophoneHardware() {
+    safeStopRecognition();
+    if (state.micStream) {
+      try {
+        state.micStream.getTracks().forEach((track) => track.stop());
+      } catch (e) {}
+      state.micStream = null;
+    }
+    if (state.micAnalyser) {
+      try {
+        state.micAnalyser.disconnect();
+      } catch (e) {}
+      state.micAnalyser = null;
+    }
+  }
+
   function setVoiceMode(mode) {
     state.voiceMode = mode;
     clearSilenceDebounce();
@@ -1166,6 +1182,14 @@
     dom.pttHoldBtn.classList.toggle('hidden', mode !== 'ptt');
 
     if (mode === 'handsfree') {
+      state.ttsEnabled = true;
+      if (dom.ttsToggleBtn) {
+        dom.ttsToggleBtn.classList.add('active');
+        dom.ttsToggleLabel.textContent = 'Voz Activa';
+      }
+      if (dom.commandInput) {
+        dom.commandInput.placeholder = 'Escribe una orden o consulta para HALCÓN...';
+      }
       updateLiveTranscriptDisplay(
         'Habla con naturalidad o escribe tu consulta abajo...',
         true
@@ -1174,19 +1198,35 @@
         safeStartRecognition();
       }
     } else if (mode === 'ptt') {
-      safeStopRecognition();
+      releaseMicrophoneHardware();
       setUltronState('idle');
+      if (dom.commandInput) {
+        dom.commandInput.placeholder = 'Escribe una orden o mantén Espacio para hablar...';
+      }
       updateLiveTranscriptDisplay(
         'Mantén presionada la barra [Espacio] o el botón inferior para hablar...',
         true
       );
     } else {
-      safeStopRecognition();
+      // Modo Chatbot: Apaga y libera el micrófono por completo y silencia la voz (para reuniones / Spotify)
+      releaseMicrophoneHardware();
+      if (state.isSpeaking) {
+        stopSpeakingBargeIn();
+      }
+      state.ttsEnabled = false;
+      if (dom.ttsToggleBtn) {
+        dom.ttsToggleBtn.classList.remove('active');
+        dom.ttsToggleLabel.textContent = 'Silencio';
+      }
       setUltronState('idle');
       updateLiveTranscriptDisplay(
-        'Micrófono en pausa. Usa el teclado o reactiva Manos Libres.',
+        'Modo Chatbot activo · Micrófono apagado y liberado (puedes escuchar música o estar en reunión sin distorsión).',
         true
       );
+      if (dom.commandInput) {
+        dom.commandInput.placeholder = 'Modo Chatbot activo (Micrófono apagado) — Escribe tu mensaje aquí...';
+        setTimeout(() => dom.commandInput.focus(), 50);
+      }
     }
   }
 
@@ -1886,8 +1926,11 @@
     fetchTelemetry();
     setInterval(fetchTelemetry, TELEMETRY_POLL_MS);
 
-    // Start continuous recognition automatically if allowed by browser
-    if (state.voiceMode === 'handsfree') {
+    // Check if launched with ?mode=chatbot
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('mode') === 'chatbot') {
+      setVoiceMode('muted');
+    } else if (state.voiceMode === 'handsfree') {
       safeStartRecognition();
     }
   }

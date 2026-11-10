@@ -59,6 +59,11 @@ def parse_args() -> argparse.Namespace:
         help="Desactiva la síntesis de voz por altavoz (solo salida en pantalla).",
     )
     parser.add_argument(
+        "--chatbot",
+        action="store_true",
+        help="Inicia HALCÓN exclusivamente en modo Chatbot (micrófono liberado y voz silenciada para reuniones/Spotify).",
+    )
+    parser.add_argument(
         "--command",
         type=str,
         default="",
@@ -109,10 +114,11 @@ def main() -> None:
     if args.no_wake:
         config.wake_word_enabled = False
 
+    is_mute = args.mute or args.chatbot
     assistant = UltronAssistant(
         config=config,
-        text_mode=args.text,
-        mute=args.mute,
+        text_mode=args.text or (args.chatbot and args.cli),
+        mute=is_mute,
         force_spanish_reply=True,
     )
 
@@ -131,7 +137,13 @@ def main() -> None:
     # Stark HUD v4.0 es la experiencia interactiva predeterminada a menos que se pida --cli o --text
     use_hud = args.hud or not (args.cli or args.text)
     if use_hud:
-        run_hud_server(assistant=assistant, host=args.host, port=args.port, open_browser=True)
+        run_hud_server(
+            assistant=assistant,
+            host=args.host,
+            port=args.port,
+            open_browser=True,
+            chatbot_mode=args.chatbot,
+        )
         return
 
     assistant.run_forever()

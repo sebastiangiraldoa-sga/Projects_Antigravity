@@ -1,3 +1,7 @@
+param(
+    [switch]$Chatbot
+)
+
 # ==============================================================================
 # Lanzador Nativo de HALCÓN AI para PowerShell en Windows
 # ==============================================================================
@@ -10,6 +14,9 @@ Write-Host ""
 Write-Host "==================================================================" -ForegroundColor Cyan
 Write-Host "              INICIANDO HALCÓN AI VOICE OS v5.2                  " -ForegroundColor Cyan
 Write-Host "        Ing. Biomedica e IA - Sebastian Giraldo Acosta          " -ForegroundColor Cyan
+if ($Chatbot) {
+Write-Host "    [MODO CHATBOT: Microfono liberado y voz silenciada]          " -ForegroundColor Yellow
+}
 Write-Host "==================================================================" -ForegroundColor Cyan
 Write-Host ""
 
@@ -34,7 +41,9 @@ Write-Host "[*] Entorno detectado: $pythonCmd" -ForegroundColor Green
 Write-Host "[*] Levantando HALCÓN con interfaz grafica Stark HUD..." -ForegroundColor Cyan
 Write-Host ""
 
-if ($args.Count -gt 0) {
+if ($Chatbot) {
+    & $pythonCmd main.py --hud --chatbot @args
+} elseif ($args.Count -gt 0) {
     & $pythonCmd main.py @args
 } else {
     & $pythonCmd main.py --hud

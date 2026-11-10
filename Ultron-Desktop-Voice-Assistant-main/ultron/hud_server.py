@@ -401,6 +401,7 @@ def run_hud_server(
     host: str = "127.0.0.1",
     port: int = 8765,
     open_browser: bool = True,
+    chatbot_mode: bool = False,
 ) -> None:
     """
     Inicia el servidor local del Stark HUD buscando automáticamente un puerto libre
@@ -433,19 +434,22 @@ def run_hud_server(
 
     browser_url = f"http://127.0.0.1:{bound_port}" if host in ("0.0.0.0", "") else f"http://{host}:{bound_port}"
     mobile_url = f"http://{local_ip}:{bound_port}"
+    browser_target = f"{browser_url}/?mode=chatbot" if chatbot_mode else browser_url
 
     assistant_name = assistant.config.load_assistant_name()
     print("\n" + "═" * 74)
     print(f"⚡ {assistant_name.upper()} — STARK HUD HOLOGRÁFICO ACTIVO")
     print(f"👤 Operador   : {assistant.config.user_name}")
     print(f"🌐 PC Local   : {browser_url}")
+    if chatbot_mode:
+        print("💬 Modo       : CHATBOT ACTIVO (Micrófono liberado y voz silenciada)")
     print(f"📱 Móvil (LAN): {mobile_url} (abre esta URL desde tu celular en la misma Wi-Fi)")
     print("🎙️ Audio      : Voz Neural (Edge Neural TTS / Cloud Neural) + WebAudio Reactor")
     print("💡 Consejo    : Presiona Ctrl+C en esta terminal para detener el servidor.")
     print("═" * 74 + "\n")
 
     if open_browser:
-        threading.Timer(0.4, launch_hud_browser, args=(browser_url,)).start()
+        threading.Timer(0.4, launch_hud_browser, args=(browser_target,)).start()
 
     try:
         server.serve_forever()
