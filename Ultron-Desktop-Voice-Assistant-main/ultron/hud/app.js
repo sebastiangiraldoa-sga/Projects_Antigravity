@@ -16,8 +16,8 @@
   // APPLICATION STATE & CONSTANTS
   // ==========================================================================
   const TELEMETRY_POLL_MS = 2500;
-  const SILENCE_DEBOUNCE_MS = 1700;
-  const RESUME_MIC_DELAY_MS = 350;
+  const SILENCE_DEBOUNCE_MS = 650;
+  const RESUME_MIC_DELAY_MS = 250;
   const GAUGE_CIRCUMFERENCE = 2 * Math.PI * 40; // r = 40 -> 251.327
 
   // Crisp Inline Vector SVG Library (Zero Emojis Anywhere)
@@ -1298,6 +1298,16 @@
     }
   }
 
+  let cachedVoices = [];
+  function preloadVoices() {
+    if ('speechSynthesis' in window) {
+      cachedVoices = window.speechSynthesis.getVoices();
+      window.speechSynthesis.onvoiceschanged = () => {
+        cachedVoices = window.speechSynthesis.getVoices();
+      };
+    }
+  }
+
   function speakWithBrowserFallback(text, lang = 'es') {
     if (!('speechSynthesis' in window)) {
       finishSpeakingAndResumeMic();
@@ -1307,15 +1317,15 @@
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = lang.startsWith('en') ? 'en-US' : 'es-CO';
-    utterance.rate = 1.03;
-    utterance.pitch = 0.96;
+    utterance.rate = 1.08;
+    utterance.pitch = 0.98;
 
-    const voices = window.speechSynthesis.getVoices();
+    const voices = (cachedVoices && cachedVoices.length) ? cachedVoices : window.speechSynthesis.getVoices();
     const preferredVoice =
       voices.find(
         (v) =>
           v.lang.toLowerCase().startsWith('es') &&
-          /natural|neural|sabina|helena|dalia|jorge|google/i.test(v.name)
+          /natural|neural|sabina|helena|dalia|jorge|google|raul/i.test(v.name)
       ) || voices.find((v) => v.lang.toLowerCase().startsWith('es'));
 
     if (preferredVoice) {
@@ -1348,6 +1358,13 @@
     setUltronState('speaking');
     ensureAudioContext();
 
+    // 1. Prioridad: Síntesis nativa del navegador para respuesta hablada instantánea (0 ms de espera)
+    if ('speechSynthesis' in window) {
+      speakWithBrowserFallback(cleanText, lang);
+      return;
+    }
+
+    // 2. Respaldo por servidor si el navegador no soporta WebSpeech
     if (state.ttsAbortController) {
       state.ttsAbortController.abort();
     }
@@ -1914,6 +1931,7 @@
     bindEvents();
     startReactorLoop();
     initSpeechRecognition();
+    preloadVoices();
 
     // Clean, calm welcome greeting
     appendChatMessage({

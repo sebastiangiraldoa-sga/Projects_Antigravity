@@ -225,12 +225,10 @@ class UltronBrain:
 
             client = genai.Client(api_key=self.config.gemini_api_key)
             models_to_try = [
-                self.config.gemini_model,
                 "gemini-3.5-flash-lite",
+                self.config.gemini_model,
                 "gemini-3.8-flash",
                 "gemini-3.5-flash",
-                "gemini-2.5-flash",
-                "gemini-2.0-flash",
             ]
             seen: set[str] = set()
             unique_models = [m for m in models_to_try if m and not (m in seen or seen.add(m))]
@@ -242,8 +240,8 @@ class UltronBrain:
                         contents=prompt,
                         config=types.GenerateContentConfig(
                             system_instruction=system_prompt,
-                            temperature=0.6,
-                            max_output_tokens=250,
+                            temperature=0.5,
+                            max_output_tokens=150,
                         ),
                     )
                     if response and response.text:
@@ -274,12 +272,10 @@ class UltronBrain:
 
             client = genai.Client(api_key=self.config.gemini_api_key)
             models_to_try = [
-                self.config.gemini_model,
                 "gemini-3.5-flash-lite",
+                self.config.gemini_model,
                 "gemini-3.8-flash",
                 "gemini-3.5-flash",
-                "gemini-2.5-flash",
-                "gemini-2.0-flash",
             ]
             seen: set[str] = set()
             unique_models = [m for m in models_to_try if m and not (m in seen or seen.add(m))]
@@ -292,8 +288,8 @@ class UltronBrain:
                         contents=prompt,
                         config=types.GenerateContentConfig(
                             system_instruction=system_prompt,
-                            temperature=0.6,
-                            max_output_tokens=250,
+                            temperature=0.5,
+                            max_output_tokens=150,
                         ),
                     )
                     break

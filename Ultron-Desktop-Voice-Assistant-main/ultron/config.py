@@ -71,7 +71,7 @@ class UltronConfig:
         )
     )
     gemini_model: str = field(
-        default_factory=lambda: os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
+        default_factory=lambda: os.getenv("GEMINI_MODEL", "gemini-3.5-flash-lite")
     )
     ollama_base_url: str = field(
         default_factory=lambda: os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
