@@ -12,7 +12,7 @@ scriptDir = fso.GetParentFolderName(WScript.ScriptFullName)
 Set wshShell = CreateObject("WScript.Shell")
 wshShell.CurrentDirectory = scriptDir
 
-batFile = scriptDir & "\Iniciar_Ultron.bat"
+batFile = scriptDir & "\Iniciar_Halcon.bat"
 
 ' Ejecutar Iniciar_Ultron.bat con ventana oculta (0 = SW_HIDE, False = asincrono en background)
 On Error Resume Next

@@ -43,8 +43,8 @@ if (-not $desktopPath -or -not (Test-Path $desktopPath)) {
 }
 
 $iconPath = Join-Path $projectRoot "ultron.ico"
-$vbsPath  = Join-Path $projectRoot "Iniciar_Ultron_Silencioso.vbs"
-$batPath  = Join-Path $projectRoot "Iniciar_Ultron.bat"
+$vbsPath  = Join-Path $projectRoot "Iniciar_Halcon_Silencioso.vbs"
+$batPath  = Join-Path $projectRoot "Iniciar_Halcon.bat"
 $wscriptExe = Join-Path $env:SystemRoot "System32\wscript.exe"
 
 $wshShell = New-Object -ComObject WScript.Shell
